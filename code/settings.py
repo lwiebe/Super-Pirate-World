@@ -14,5 +14,5 @@ Z_LAYERS = {
     'bg details': 4,
     'main': 5,
     'water': 6,
-    'fg': 7,
+    'fg': 7
 }
