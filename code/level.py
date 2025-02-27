@@ -60,7 +60,7 @@ class Level:
         for obj in tmx_map.get_layer_by_name('Moving Objects'):
             if obj.name == 'spike':
                 Spike(
-                    pos = (obj.x + obj.width, obj.y + obj.height),
+                    pos = (obj.x + obj.width / 2, obj.y + obj.height / 2),
                     surf = level_frames['spike'],
                     radius = obj.properties['radius'],
                     speed = obj.properties['speed'],
@@ -69,7 +69,7 @@ class Level:
                     groups = (self.all_sprites, self.damage_sprites))
                 for radius in range(0, obj.properties['radius'], 20):
                     Spike(
-                        pos = (obj.x + obj.width, obj.y + obj.height),
+                        pos = (obj.x + obj.width / 2, obj.y + obj.height / 2),
                         surf = level_frames['spike_chain'],
                         radius = radius,
                         speed = obj.properties['speed'],
