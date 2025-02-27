@@ -1,5 +1,5 @@
 from settings import *
-from sprites import Sprite, AnimatedSprite, MovingSprite
+from sprites import Sprite, AnimatedSprite, MovingSprite, Spike
 from player import Player
 from groups import AllSprites
 
@@ -11,6 +11,7 @@ class Level:
         self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()
         self.semi_collision_sprites = pygame.sprite.Group()
+        self.damage_sprites = pygame.sprite.Group()
 
         self.setup(tmx_map, level_frames)
 
@@ -65,8 +66,18 @@ class Level:
                     speed = obj.properties['speed'],
                     start_angle = obj.properties['start_angle'],
                     end_angle = obj.properties['end_angle'],
-                    groups = (self.all_sprites, self.damage_sprites)
-                )
+                    groups = (self.all_sprites, self.damage_sprites))
+                for radius in range(0, obj.properties['radius'], 20):
+                    Spike(
+                        pos = (obj.x + obj.width, obj.y + obj.height),
+                        surf = level_frames['spike_chain'],
+                        radius = radius,
+                        speed = obj.properties['speed'],
+                        start_angle = obj.properties['start_angle'],
+                        end_angle = obj.properties['end_angle'],
+                        groups = self.all_sprites,
+                        z = Z_LAYERS['bg details'])
+                
             else:
                 frames = level_frames[obj.name]
                 groups = (self.all_sprites, self.semi_collision_sprites) if obj.properties['platform'] else (self.all_sprites, self.damage_sprites)
