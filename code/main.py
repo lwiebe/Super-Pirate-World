@@ -3,6 +3,7 @@ from level import Level
 from pytmx.util_pygame import load_pygame
 from os.path import join
 from support import *
+from data import Data
 
 class Game:
     def __init__(self):
@@ -12,6 +13,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.import_assets()
         
+        self.data = Data()
         self.tmx_maps = {0: load_pygame(join('data', 'levels', 'omni.tmx'))}        
         self.current_stage = Level(self.tmx_maps[0], self.level_frames)
         
