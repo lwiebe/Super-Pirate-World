@@ -176,7 +176,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="7" name="Items" visible="0">
+ <objectgroup id="7" name="Items">
   <object id="22" name="diamond" gid="49" x="512" y="384" width="64" height="64"/>
   <object id="23" name="gold" gid="50" x="1088" y="448" width="64" height="64"/>
   <object id="24" name="potion" gid="51" x="512" y="320" width="64" height="64"/>
@@ -200,13 +200,13 @@
   </object>
   <object id="76" name="tooth" gid="225" x="1408" y="256" width="48" height="46"/>
  </objectgroup>
- <objectgroup id="2" name="Water" visible="0">
+ <objectgroup id="2" name="Water">
   <object id="2" name="water" x="0" y="640" width="2560" height="320"/>
  </objectgroup>
- <objectgroup id="8" name="Data" visible="0">
+ <objectgroup id="8" name="Data">
   <object id="28" name="Data" x="0" y="0" width="64" height="64">
    <properties>
-    <property name="bg" value=""/>
+    <property name="bg" value="Pink"/>
     <property name="bottom_limit" type="int" value="200"/>
     <property name="death_border_bottom" type="int" value="0"/>
     <property name="horizon_line" type="int" value="600"/>
