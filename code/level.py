@@ -7,7 +7,7 @@ from enemies import Tooth, Shell, Pearl
 from random import uniform
 
 class Level:
-    def __init__(self, tmx_map, level_frames, data, switch_stage):
+    def __init__(self, tmx_map, level_frames, audio_files, data, switch_stage):
         self.display_surface = pygame.display.get_surface()
         self.data = data
         self.switch_stage = switch_stage
@@ -37,12 +37,21 @@ class Level:
         self.pearl_sprites = pygame.sprite.Group()
         self.item_sprites = pygame.sprite.Group()
 
-        self.setup(tmx_map, level_frames)
+        self.setup(tmx_map, level_frames, audio_files)
         
+        # frames
         self.pearl_surf = level_frames['pearl']
         self.particle_frames = level_frames['particle']
+        
+        # audio
+        self.coin_sound = audio_files['coin']
+        self.coin_sound.set_volume(0.1)
+        self.damage_sound = audio_files['damage']
+        self.damage_sound.set_volume(0.1)
+        self.pearl_sound = audio_files['pearl']
+        self.pearl_sound.set_volume(0.4)
 
-    def setup(self, tmx_map, level_frames):
+    def setup(self, tmx_map, level_frames, audio_files):
         # tiles
         for layer in ['BG', 'Terrain', 'FG', 'Platforms']:
             for x, y, surf in tmx_map.get_layer_by_name(layer).tiles():
@@ -74,7 +83,9 @@ class Level:
                     collision_sprites = self.collision_sprites,
                     semi_collision_sprites = self.semi_collision_sprites,
                     frames = level_frames['player'],
-                    data = self.data)
+                    data = self.data,
+                    attack_sound = audio_files['attack'],
+                    jump_sound = audio_files['jump'])
             else:
                 if obj.name in ('barrel', 'crate'):
                     Sprite((obj.x,obj.y), obj.image, (self.all_sprites, self.collision_sprites))
@@ -178,6 +189,7 @@ class Level:
         
     def create_pearl(self, pos, direction):
         Pearl(pos, (self.all_sprites, self.damage_sprites, self.pearl_sprites), self.pearl_surf, direction, 150)
+        self.pearl_sound.play()
 
     def pearl_collision(self):
         for sprite in self.collision_sprites:
@@ -189,6 +201,7 @@ class Level:
         for sprite in self.damage_sprites:
             if sprite.rect.colliderect(self.player.hitbox_rect):
                 self.player.get_damage()
+                self.damage_sound.play()
                 if hasattr(sprite, 'pearl'):
                     sprite.kill()
                     ParticlEffectSprite((sprite.rect.center), self.particle_frames, self.all_sprites)
@@ -199,6 +212,7 @@ class Level:
             if item_sprites:
                 item_sprites[0].activate()
                 ParticlEffectSprite((item_sprites[0].rect.center), self.particle_frames, self.all_sprites)
+                self.coin_sound.play()
 
     def attack_collision(self):
         for target in self.pearl_sprites.sprites() + self.tooth_sprites.sprites():

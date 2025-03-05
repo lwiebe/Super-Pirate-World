@@ -4,7 +4,7 @@ from os.path import join
 from math import sin
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, collision_sprites, semi_collision_sprites, frames, data):
+    def __init__(self, pos, groups, collision_sprites, semi_collision_sprites, frames, data, attack_sound, jump_sound):
         # gerneal setup
         super().__init__(groups)
         self.z = Z_LAYERS['main']
@@ -40,26 +40,32 @@ class Player(pygame.sprite.Sprite):
             'wall slide block': Timer(250),
             'platform skip': Timer(100),
             'attack block': Timer(500),
-            'hit': Timer(400)
+            'hit': Timer(500)
         }
+        
+        # audio
+        self.attack_sound = attack_sound
+        self.attack_sound.set_volume(0.1)
+        self.jump_sound = jump_sound
+        self.jump_sound.set_volume(0.1)
         
     def input(self):
         keys = pygame.key.get_pressed()
         input_vector = vector(0,0)
         if not self.timers['wall jump'].active:
             
-            if keys[pygame.K_RIGHT]:
+            if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
                 input_vector.x += 1
                 self.facing_right = True
                 
-            if keys[pygame.K_LEFT]:
+            if keys[pygame.K_LEFT] or keys[pygame.K_a]:
                 input_vector.x -= 1
                 self.facing_right = False
                 
-            if keys[pygame.K_DOWN]:
+            if keys[pygame.K_DOWN] or keys[pygame.K_s]:
                 self.timers['platform skip'].activate()
                 
-            if keys[pygame.K_x]:
+            if keys[pygame.K_x] or keys[pygame.K_k]:
                 self.attack()
                 
             self.direction.x = input_vector.normalize().x if input_vector else input_vector.x
@@ -72,6 +78,7 @@ class Player(pygame.sprite.Sprite):
             self.attacking = True
             self.frame_index = 0
             self.timers['attack block'].activate()
+            self.attack_sound.play()
     
     def move(self, dt):
         # horizontal
@@ -92,10 +99,12 @@ class Player(pygame.sprite.Sprite):
                 self.direction.y = -self.jump_height
                 self.timers['wall slide block'].activate()
                 self.hitbox_rect.bottom -= 1
+                self.jump_sound.play()
             elif any((self.on_surface['left'], self.on_surface['right'])) and not self.timers['wall slide block'].active:
                 self.timers['wall jump'].activate()
                 self.direction.y = -self.jump_height
                 self.direction.x = 1 if self.on_surface['left'] else -1
+                self.jump_sound.play()
             self.jump = False
                 
         self.collision('vertical')
